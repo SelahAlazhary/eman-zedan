@@ -321,6 +321,8 @@ export type Ticket = {
 
 /* ---------- المستخدمون (الحسابات) ---------- */
 export type Role = "admin" | "student";
+import type { AdminPerm } from "./perms";
+
 export type User = {
   id: string;
   name: string;
@@ -346,6 +348,8 @@ export type User = {
   deviceBoundAt?: string;            // تاريخ الارتباط
   deviceResetAt?: string;            // آخر سماح من الأدمن بجهاز جديد
   readNotifications?: string[];      // معرّفات الإشعارات المقروءة
+  owner?: boolean;                   // مالكة المنصّة — كل الصلاحيات ولا تُحذف
+  adminPerms?: AdminPerm[];          // صلاحيات المشرف (تُتجاهل للمالكة)
   createdAt: string;
 };
 
@@ -453,7 +457,11 @@ export type SecurityKind =
   | "csrf_blocked"        // طلب من أصل خارجي
   | "media_denied"        // طلب ملف غير مسجّل في المنصّة
   | "banned_hit"          // عنوان محظور حاول الدخول
-  | "signup";             // إنشاء حساب
+  | "signup"              // إنشاء حساب
+  | "admin_added"         // إضافة مشرف
+  | "admin_changed"       // تعديل صلاحيات مشرف
+  | "admin_removed"       // حذف مشرف
+  | "perm_denied";        // مشرف حاول قسماً بلا صلاحية
 
 export type SecurityEvent = {
   id: string;

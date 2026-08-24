@@ -69,13 +69,20 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "الحساب موقوف — تواصل مع الدعم" }, { status: 403 });
   }
 
-  // حساب الطالب مرتبط بجهاز واحد؛ حساب الأدمن غير مقيّد
-  if (user!.role === "student") {
+  /**
+   * جهاز واحد لكل حساب — للطالب وللمشرف على السواء.
+   * صمّام أمان: ADMIN_DEVICE_LOCK=0 يوقف القفل عن المشرفين وحدهم،
+   * لاستعادة الدخول إن فُقد جهاز المالكة (موثّق في DEPLOY.md).
+   */
+  const lockAdmins = process.env.ADMIN_DEVICE_LOCK !== "0";
+  if (user!.role === "student" || (user!.role === "admin" && lockAdmins)) {
     const device = await ensureDeviceId();
     if (user!.deviceId && user!.deviceId !== device) {
       await recordEvent("device_mismatch", "دخول من جهاز غير المرتبط", { userId: user!.id, username: user!.username });
       return NextResponse.json(
-        { error: "هذا الحساب مسجَّل على جهاز آخر. للدخول من هذا الجهاز تواصل مع الدعم للسماح به.", code: "device_mismatch" },
+        { error: user!.role === "admin"
+            ? "هذا الحساب مرتبط بجهاز آخر. اسمحي بجهاز جديد من قسم المشرفين."
+            : "هذا الحساب مسجَّل على جهاز آخر. للدخول من هذا الجهاز تواصل مع الدعم للسماح به.", code: "device_mismatch" },
         { status: 403 }
       );
     }

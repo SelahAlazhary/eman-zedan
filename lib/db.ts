@@ -85,6 +85,16 @@ export function getDB(): DB {
   const db = peek(seed);
   // تعبئة أي مصفوفات مفقودة (لقواعد بيانات أُنشئت قبل إضافة الحقل)
   db.notifications = db.notifications ?? [];
+
+  /**
+   * مالكة المنصّة: إن لم يُعلَّم أحد بعد، فأقدم مشرف هو المالكة.
+   * يضمن وجود حساب واحد لا تُسحب صلاحياته ولا يُحذف مهما جرى.
+   */
+  const admins = (db.users ?? []).filter((u) => u.role === "admin");
+  if (admins.length && !admins.some((u) => u.owner)) {
+    const first = [...admins].sort((a, b) => (a.createdAt ?? "").localeCompare(b.createdAt ?? ""))[0];
+    first.owner = true;
+  }
   db.plans = db.plans ?? [];
   db.security = db.security ?? { events: [], bans: [] };
   db.security.events = db.security.events ?? [];

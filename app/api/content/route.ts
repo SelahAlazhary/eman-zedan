@@ -1,7 +1,8 @@
 import { NextResponse } from "next/server";
-import { getScopedDB, getPublicDB, patchDB, publicIntegrations, loadDB, flushDB } from "@/lib/db";
+import { getScopedDB, getPublicDB, getDB, patchDB, publicIntegrations, loadDB, flushDB } from "@/lib/db";
 import { getSession } from "@/lib/session";
 import { recordEvent } from "@/lib/security";
+import { can, permForDbKey } from "@/lib/perms";
 import type { DB } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
@@ -25,6 +26,18 @@ export async function PUT(req: Request) {
     return NextResponse.json({ error: "غير مصرّح" }, { status: 401 });
   }
   const patch = (await req.json()) as Partial<DB>;
+
+  /**
+   * الصلاحيات تُفحص على الخادم: مشرف بلا صلاحية قسم لا يستطيع تعديل
+   * بياناته حتى لو استدعى المسار مباشرة. المالكة تمرّ دائماً.
+   */
+  const me = getDB().users.find((u) => u.id === session.uid);
+  const touched = Object.keys(patch).filter((k) => k !== "users" && k !== "integrations");
+  const missing = touched.filter((k) => !can(me, permForDbKey(k)));
+  if (missing.length) {
+    await recordEvent("perm_denied", `تعديل بلا صلاحية: ${missing.join("، ")}`, { userId: me?.id, username: me?.username });
+    return NextResponse.json({ error: "ليست لديك صلاحية تعديل هذا القسم" }, { status: 403 });
+  }
   // منع تعديل المستخدمين والتكاملات عبر هذا المسار (لهما مساراتهما الخاصة)
   delete (patch as Record<string, unknown>).users;
   delete (patch as Record<string, unknown>).integrations;

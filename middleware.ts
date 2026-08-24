@@ -71,7 +71,10 @@ export function middleware(req: NextRequest) {
     }
   }
 
-  const res = NextResponse.next();
+  // تمرير المسار للطبقة الخادمية (تستخدمه لوحة الإدارة لفحص الصلاحيات)
+  const forwarded = new Headers(req.headers);
+  forwarded.set("x-pathname", pathname);
+  const res = NextResponse.next({ request: { headers: forwarded } });
   for (const [k, v] of Object.entries(SECURITY_HEADERS)) res.headers.set(k, v);
   res.headers.set("Content-Security-Policy", CSP);
   return res;
