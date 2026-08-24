@@ -149,7 +149,7 @@ export async function ensureStore(seed?: () => DB): Promise<DB> {
         source = "local";
         return emergency;
       }
-      throw new Error("تعذّر الوصول إلى قاعدة البيانات السحابية");
+      throw new Error(`تعذّر الوصول إلى قاعدة البيانات السحابية${lastError ? ` — ${lastError}` : ""}`);
     }
   }
 

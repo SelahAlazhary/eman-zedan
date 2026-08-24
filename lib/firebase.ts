@@ -89,11 +89,16 @@ function b64url(input: Buffer | string): string {
   return Buffer.from(input).toString("base64url");
 }
 
-async function accessToken(c: FirebaseConfig): Promise<string | null> {
-  if (!c.clientEmail || !c.privateKey) return null;
-  if (cachedToken && cachedToken.exp - 60_000 > Date.now()) return cachedToken.value;
+/**
+ * فرق ساعة الجهاز عن ساعة جوجل (مللي ثانية).
+ * ساعة متقدّمة أو متأخّرة تُفشل توقيع JWT برسالة «Invalid JWT»،
+ * لذا نقيس الفرق من ترويسة Date في ردّ جوجل ونصحّحه تلقائياً.
+ */
+let clockSkewMs = 0;
 
-  const now = Math.floor(Date.now() / 1000);
+function buildAssertion(c: FirebaseConfig): string {
+  // ننقص ٣٠ ثانية كهامش أمان ضدّ فروق الساعة الصغيرة
+  const now = Math.floor((Date.now() - clockSkewMs) / 1000) - 30;
   const header = b64url(JSON.stringify({ alg: "RS256", typ: "JWT" }));
   const claim = b64url(
     JSON.stringify({
@@ -107,23 +112,47 @@ async function accessToken(c: FirebaseConfig): Promise<string | null> {
   const signature = crypto
     .createSign("RSA-SHA256")
     .update(`${header}.${claim}`)
-    .sign(c.privateKey)
+    .sign(c.privateKey!)
     .toString("base64url");
+  return `${header}.${claim}.${signature}`;
+}
 
+async function requestToken(c: FirebaseConfig) {
   const res = await fetch("https://oauth2.googleapis.com/token", {
     method: "POST",
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
     body: new URLSearchParams({
       grant_type: "urn:ietf:params:oauth:grant-type:jwt-bearer",
-      assertion: `${header}.${claim}.${signature}`,
+      assertion: buildAssertion(c),
     }).toString(),
     cache: "no-store",
   });
-  const data = await res.json();
-  if (!res.ok || !data.access_token) {
-    throw new Error(data.error_description || data.error || "تعذّر الحصول على رمز فايربيز");
+  const data = (await res.json().catch(() => ({}))) as Record<string, string>;
+  return { res, data };
+}
+
+async function accessToken(c: FirebaseConfig): Promise<string | null> {
+  if (!c.clientEmail || !c.privateKey) return null;
+  if (cachedToken && cachedToken.exp - 60_000 > Date.now()) return cachedToken.value;
+
+  let { res, data } = await requestToken(c);
+
+  // ساعة الجهاز غير مضبوطة: نقيس الفرق من ردّ جوجل ونعيد المحاولة مرّة واحدة
+  if (!res.ok && /JWT|iat|exp|timeframe/i.test(String(data.error_description ?? data.error ?? ""))) {
+    const serverDate = res.headers.get("date");
+    const t = serverDate ? Date.parse(serverDate) : NaN;
+    if (Number.isFinite(t)) {
+      clockSkewMs = Date.now() - t;
+      ({ res, data } = await requestToken(c));
+    }
   }
-  cachedToken = { value: data.access_token, exp: Date.now() + (data.expires_in ?? 3600) * 1000 };
+
+  if (!res.ok || !data.access_token) {
+    const off = Math.round(clockSkewMs / 1000);
+    const extra = Math.abs(off) > 30 ? ` (ساعة الجهاز تختلف عن الوقت الحقيقي بـ ${off} ثانية)` : "";
+    throw new Error((data.error_description || data.error || "تعذّر الحصول على رمز فايربيز") + extra);
+  }
+  cachedToken = { value: data.access_token, exp: Date.now() + Number(data.expires_in ?? 3600) * 1000 };
   return cachedToken.value;
 }
 
