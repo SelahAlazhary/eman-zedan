@@ -194,19 +194,9 @@ export function DashboardShell({
                     aria-current={active ? "page" : undefined}
                     className={`app-tab ${active ? "text-primary" : "text-muted-foreground"}`}
                   >
-                    {active && (
-                      <motion.span
-                        layoutId="dock-pill"
-                        transition={{ type: "spring", stiffness: 460, damping: 38 }}
-                        className="app-tab-pill"
-                      />
-                    )}
+                    {active && <span className="app-tab-pill" />}
                     <span className="relative z-10 grid size-7 place-items-center">
-                      <Icon
-                        key={active ? "on" : "off"}
-                        anim={active ? "pop" : undefined}
-                        className={`transition-[width,height] ${active ? "size-[1.3rem]" : "size-[1.15rem]"}`}
-                      />
+                      <Icon className="size-[1.2rem]" />
                     </span>
                     <span className="relative z-10 max-w-full truncate">{item.label}</span>
                   </Link>
