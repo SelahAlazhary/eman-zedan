@@ -146,7 +146,7 @@ export function DashboardShell({
       <div className="lg:pr-64">
         {/* Topbar */}
         <header className="sticky top-0 z-30 flex items-center gap-3 border-b border-border bg-background/80 px-4 pb-3 pt-[max(0.75rem,env(safe-area-inset-top))] backdrop-blur-xl sm:px-6">
-          <button onClick={() => setOpen(true)} aria-label="القائمة" className="grid size-11 shrink-0 place-items-center rounded-full border border-border lg:hidden">
+          <button onClick={() => setOpen(true)} aria-label="القائمة" className={`grid size-11 shrink-0 place-items-center rounded-full border border-border lg:hidden ${role === "student" ? "hidden" : ""}`}>
             <IconMenu className="size-5" />
           </button>
 
@@ -177,13 +177,13 @@ export function DashboardShell({
         <main className="p-4 pb-[calc(6.5rem+env(safe-area-inset-bottom))] sm:p-6 lg:pb-8">{children}</main>
       </div>
 
-      {/* Bottom nav للموبايل (وضع الطالب) */}
+      {/* شريط تبويبات عائم بأسلوب التطبيقات (الطالب · موبايل) */}
       {role === "student" && (
-        <nav
-          aria-label="التنقّل السريع"
-          className="fixed inset-x-0 bottom-0 z-30 border-t border-border bg-background/85 pb-[env(safe-area-inset-bottom)] backdrop-blur-2xl lg:hidden"
-        >
-          <ul className="grid" style={{ gridTemplateColumns: `repeat(${nav.length}, minmax(0, 1fr))` }}>
+        <nav aria-label="التنقّل السريع" className="app-dock lg:hidden">
+          <ul
+            className="app-dock-inner no-select-app"
+            style={{ gridTemplateColumns: `repeat(${nav.length}, minmax(0, 1fr))` }}
+          >
             {nav.map((item) => {
               const Icon = ICONS[item.icon] ?? IconHome;
               const active = isActive(item.href);
@@ -192,21 +192,23 @@ export function DashboardShell({
                   <Link
                     href={item.href}
                     aria-current={active ? "page" : undefined}
-                    className={`relative flex min-h-[3.5rem] flex-col items-center justify-center gap-1 px-1 pb-1.5 pt-2 text-[10px] font-bold transition-colors ${
-                      active ? "text-primary" : "text-muted-foreground active:text-foreground"
-                    }`}
+                    className={`app-tab ${active ? "text-primary" : "text-muted-foreground"}`}
                   >
                     {active && (
                       <motion.span
-                        layoutId="bottom-nav-indicator"
-                        transition={{ type: "spring", stiffness: 420, damping: 34 }}
-                        className="absolute inset-x-3 top-0 h-0.5 rounded-full bg-primary"
+                        layoutId="dock-pill"
+                        transition={{ type: "spring", stiffness: 460, damping: 38 }}
+                        className="app-tab-pill"
                       />
                     )}
-                    <span className={`grid size-8 place-items-center rounded-xl transition-colors ${active ? "bg-primary/12" : ""}`}>
-                      <Icon key={active ? "on" : "off"} anim={active ? "pop" : undefined} className="size-[1.15rem]" />
+                    <span className="relative z-10 grid size-7 place-items-center">
+                      <Icon
+                        key={active ? "on" : "off"}
+                        anim={active ? "pop" : undefined}
+                        className={`transition-[width,height] ${active ? "size-[1.3rem]" : "size-[1.15rem]"}`}
+                      />
                     </span>
-                    <span className="max-w-full truncate">{item.label}</span>
+                    <span className="relative z-10 max-w-full truncate">{item.label}</span>
                   </Link>
                 </li>
               );
@@ -214,6 +216,7 @@ export function DashboardShell({
           </ul>
         </nav>
       )}
+
     </div>
   );
 }

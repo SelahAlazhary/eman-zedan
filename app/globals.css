@@ -104,6 +104,94 @@ body {
 /* ============================================================
    أدوات مساعدة
    ============================================================ */
+
+/* ============================================================
+   إحساس التطبيق على الهاتف
+   شريط تبويبات عائم، ضغط ملموس، وارتداد محكوم.
+   ============================================================ */
+
+/* شريط التبويبات العائم — منفصل عن حافة الشاشة كتطبيقات iOS/Android */
+.app-dock {
+  position: fixed;
+  z-index: 30;
+  inset-inline: 0;
+  bottom: calc(env(safe-area-inset-bottom) + 0.625rem);
+  padding-inline: 0.75rem;
+  pointer-events: none;
+}
+
+.app-dock-inner {
+  display: grid;
+  gap: 0.125rem;
+  margin-inline: auto;
+  max-width: 30rem;
+  padding: 0.375rem;
+  border-radius: 1.375rem;
+  pointer-events: auto;
+  background: hsl(var(--card) / 0.82);
+  border: 1px solid hsl(var(--border));
+  backdrop-filter: blur(22px) saturate(1.6);
+  -webkit-backdrop-filter: blur(22px) saturate(1.6);
+  box-shadow:
+    0 1px 0 0 hsl(var(--background) / 0.6) inset,
+    0 10px 30px -12px rgb(0 0 0 / 0.45),
+    0 2px 8px -4px rgb(0 0 0 / 0.3);
+}
+
+.app-tab {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.1875rem;
+  min-height: 3.125rem;
+  padding: 0.375rem 0.25rem;
+  border-radius: 1rem;
+  font-size: 0.625rem;
+  font-weight: 700;
+  line-height: 1;
+  transition: color 0.18s ease, transform 0.12s ease;
+}
+
+/* ضغط ملموس: العنصر ينخفض قليلاً تحت الإصبع */
+.app-tab:active { transform: scale(0.93); }
+
+/* الحبّة المتحرّكة خلف التبويب النشط */
+.app-tab-pill {
+  position: absolute;
+  inset: 0;
+  border-radius: 1rem;
+  background: hsl(var(--primary) / 0.13);
+  box-shadow: inset 0 0 0 1px hsl(var(--primary) / 0.22);
+}
+
+/* ضغط ملموس عام لأي عنصر تفاعلي على اللمس */
+@media (hover: none) and (pointer: coarse) {
+  button:active,
+  a[class*="rounded"]:active,
+  [role="button"]:active {
+    transform: scale(0.97);
+  }
+  button, a[class*="rounded"], [role="button"] {
+    transition: transform 0.12s ease;
+  }
+}
+
+/* داخل التطبيق المثبّت: لا سحب-للتحديث ولا ارتداد يكشف خلفية المتصفّح */
+@media (display-mode: standalone) {
+  html, body {
+    overscroll-behavior: none;
+    height: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .app-tab:active,
+  button:active,
+  [role="button"]:active { transform: none; }
+}
+
 @layer utilities {
   /* تدرّج نصّي هادئ: لونان فقط وبلا حركة لا نهائية */
   .text-gradient {
@@ -363,7 +451,7 @@ body {
   /* شريط أدوات سفلي لاصق فوق شريط التنقّل في الجوّال */
   .sticky-cta {
     position: sticky;
-    bottom: calc(4.5rem + env(safe-area-inset-bottom));
+    bottom: calc(5.5rem + env(safe-area-inset-bottom));
     z-index: 20;
   }
 }
