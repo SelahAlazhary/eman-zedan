@@ -62,6 +62,7 @@ export default function LivePage() {
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState<string | null>(null);
   const [copied, setCopied] = useState<string | null>(null);
+  const [showUri, setShowUri] = useState(false); // عنوان العودة يظهر عند الطلب فقط
   const [notice, setNotice] = useState<string | null>(null); // رسائل العمليات (بدء/إنهاء البث)
   const [gcfg, setGcfg] = useState<{ redirectUri: string; origin: string; clientIdHead: string; pinned: boolean } | null>(null);
   const [f, setF] = useState<Form>({
@@ -239,14 +240,9 @@ export default function LivePage() {
           )}
         </div>
 
-        {/* عنوان العودة المطلوب تسجيله عند جوجل */}
-        {google?.configured && gcfg && (
+        {/* عنوان العودة — مخفيّ إلا عند طلبه من زرّ صغير عند الحاجة */}
+        {google?.configured && gcfg && showUri && (
           <div className="mt-4 rounded-2xl border border-dashed border-border p-3">
-            <p className="mb-2 text-[11px] font-bold text-muted-foreground">
-              الخطأ 400 redirect_uri_mismatch يعني أن العنوان التالي غير مسجّل حرفياً عند جوجل.
-              انسخه والصقه في: Google Cloud Console ← Credentials ← اضغط على OAuth client
-              {" "}<span dir="ltr" className="font-mono">{gcfg.clientIdHead}…</span> ← Authorized redirect URIs ← ADD URI ثم SAVE.
-            </p>
             <div className="flex items-center gap-2">
               <code dir="ltr" className="min-w-0 flex-1 truncate rounded-xl bg-muted px-3 py-2 text-left text-xs">{gcfg.redirectUri}</code>
               <button onClick={() => copy(gcfg.redirectUri)} title="نسخ"
@@ -254,13 +250,14 @@ export default function LivePage() {
                 {copied === gcfg.redirectUri ? <Check className="size-4 text-emerald-500" /> : <Copy className="size-4" />}
               </button>
             </div>
-            <ul className="mt-2 space-y-1 text-[11px] text-muted-foreground">
-              <li>• أنتِ تتصفّحين الآن عبر <span dir="ltr" className="font-mono">{gcfg.origin}</span> — العنوان أعلاه مشتقّ منه، فإن غيّرتِ المنفذ تغيّر معه.</li>
-              <li>• <span dir="ltr" className="font-mono">localhost</span> و<span dir="ltr" className="font-mono">127.0.0.1</span> عنوانان مختلفان عند جوجل — سجّل ما تستخدمينه فعلاً.</li>
-              <li>• التغيير في Google Cloud قد يستغرق دقائق قبل أن يسري.</li>
-              {gcfg.pinned && <li>• العنوان مثبّت من متغيّر البيئة GOOGLE_REDIRECT_URI.</li>}
-            </ul>
           </div>
+        )}
+
+        {google?.configured && !google?.connected && (
+          <button onClick={() => setShowUri((v) => !v)}
+            className="mt-3 text-[11px] font-bold text-muted-foreground underline-offset-4 hover:underline">
+            {showUri ? "إخفاء عنوان العودة" : "لا يعمل الربط؟ اعرض عنوان العودة"}
+          </button>
         )}
       </Card>
 

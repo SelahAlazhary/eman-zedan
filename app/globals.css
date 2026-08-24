@@ -118,6 +118,12 @@ body {
   bottom: calc(env(safe-area-inset-bottom) + 0.625rem);
   padding-inline: 0.75rem;
   pointer-events: none;
+  /* طبقة عرض مستقلّة: يمنع اهتزاز الشريط مع تمرير الصفحة على الهاتف
+     وانزلاقه عند ظهور شريط عنوان المتصفّح واختفائه. */
+  transform: translateZ(0);
+  will-change: transform;
+  backface-visibility: hidden;
+  transition: none;
 }
 
 .app-dock-inner {

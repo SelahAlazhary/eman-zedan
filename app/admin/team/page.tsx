@@ -213,11 +213,11 @@ export default function TeamPage() {
                 <div className="flex w-full flex-wrap gap-2 sm:w-auto">
                   {a.hasDevice && (
                     <button
-                      onClick={() => patch(a.id, { resetDevice: true }, "يمكنه الآن الدخول من جهاز جديد")}
+                      onClick={() => patch(a.id, { resetDevice: true }, "فُكّ الارتباط — أوّل دخول تالٍ يربط الحساب بالجهاز الجديد")}
                       disabled={busy === a.id}
                       className="inline-flex flex-1 items-center justify-center gap-1.5 rounded-full border border-border px-3.5 py-2 text-xs font-bold transition hover:border-primary/40 disabled:opacity-60 sm:flex-none"
                     >
-                      <IconPhone className="size-3.5" /> جهاز جديد
+                      <IconPhone className="size-3.5" /> نقل لجهاز جديد
                     </button>
                   )}
                   {!a.owner && (
