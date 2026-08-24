@@ -1,0 +1,407 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/*
+  ============================================================
+  نظام الثيم — متغيرات HSL
+  ------------------------------------------------------------
+  الطبقة 1: data-layout=(dark|light)  →  يحدّد الخلفية والسطح والنص.
+  الطبقة 2: data-preset=(...)          →  يحدّد --primary / --accent / --glow.
+  الأدمن يستطيع الكتابة فوق المتغيرات مباشرة (HEX مخصّص) من الـ ThemeProvider.
+  ============================================================
+*/
+
+:root {
+  /* الافتراضي: Theme B (Clean Luxury) + Royal Violet */
+  --background: 40 30% 98%;
+  --foreground: 240 15% 12%;
+  --card: 0 0% 100%;
+  --card-foreground: 240 15% 12%;
+  --muted: 40 12% 94%;
+  --muted-foreground: 240 6% 42%;
+  --border: 240 12% 88%;
+
+  --primary: 262 83% 58%;
+  --primary-foreground: 0 0% 100%;
+  --accent: 292 76% 60%;
+  --accent-foreground: 0 0% 100%;
+  --glow: 268 90% 66%;
+
+  --font-sans: "Readex Pro", system-ui, sans-serif;
+  --font-display: "Alexandria", var(--font-sans);
+}
+
+/* ---------- الطبقة 1: تخطيط داكن (Cyber-Glass) ---------- */
+[data-layout="dark"] {
+  --background: 229 44% 6%;
+  --foreground: 220 30% 96%;
+  --card: 226 32% 12%;
+  --card-foreground: 220 30% 96%;
+  --muted: 226 28% 16%;
+  --muted-foreground: 222 16% 66%;
+  --border: 225 26% 22%;
+}
+
+/* ---------- الطبقة 1: تخطيط فاتح (Editorial Bento) ---------- */
+[data-layout="light"] {
+  --background: 40 30% 98%;
+  --foreground: 240 15% 12%;
+  --card: 0 0% 100%;
+  --card-foreground: 240 15% 12%;
+  --muted: 40 12% 94%;
+  --muted-foreground: 240 6% 42%;
+  --border: 240 12% 88%;
+}
+
+/* ---------- الطبقة 2: بريسيتات الألوان ---------- */
+[data-preset="violet"] {
+  --primary: 262 83% 58%;
+  --accent: 292 76% 60%;
+  --glow: 268 90% 66%;
+}
+[data-preset="emerald"] {
+  --primary: 158 74% 42%;
+  --accent: 173 70% 45%;
+  --glow: 152 82% 50%;
+}
+[data-preset="ocean"] {
+  --primary: 211 92% 55%;
+  --accent: 196 90% 52%;
+  --glow: 205 96% 60%;
+}
+[data-preset="crimson"] {
+  --primary: 348 83% 55%;
+  --accent: 12 88% 58%;
+  --glow: 352 92% 62%;
+}
+
+/* ============================================================
+   الأساسيات
+   ============================================================ */
+* {
+  border-color: hsl(var(--border));
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: hsl(var(--background));
+  color: hsl(var(--foreground));
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  transition: background-color 0.5s ease, color 0.4s ease;
+}
+
+/* تمرير أنيق */
+::selection {
+  background: hsl(var(--primary) / 0.28);
+}
+
+/* ============================================================
+   أدوات مساعدة
+   ============================================================ */
+@layer utilities {
+  /* تدرّج نصّي هادئ: لونان فقط وبلا حركة لا نهائية */
+  .text-gradient {
+    background-image: linear-gradient(
+      92deg,
+      hsl(var(--primary)),
+      hsl(var(--accent))
+    );
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    /* منع قصّ أسفل الحروف العربية (النقاط/المدّات) الذي يسبّب التصاق النصوص */
+    padding-bottom: 0.12em;
+    -webkit-box-decoration-break: clone;
+    box-decoration-break: clone;
+  }
+
+  /* تباعد أسطر مريح للعناوين العربية (يمنع تلاصق الأسطر عند الالتفاف) */
+  h1, h2, h3 {
+    line-height: 1.45;
+  }
+
+  /* بطاقة زجاجية — تتكيّف مع التخطيط الداكن/الفاتح */
+  .glass {
+    background: hsl(var(--card) / 0.55);
+    backdrop-filter: blur(16px) saturate(160%);
+    -webkit-backdrop-filter: blur(16px) saturate(160%);
+    border: 1px solid hsl(var(--border) / 0.7);
+  }
+  [data-layout="dark"] .glass {
+    background: hsl(var(--card) / 0.4);
+    border-color: hsl(0 0% 100% / 0.08);
+  }
+
+  /* هالة خلفية للأقسام الداكنة */
+  .ambient-mesh {
+    background-image: radial-gradient(
+        55% 55% at 18% 12%,
+        hsl(var(--primary) / 0.28) 0%,
+        transparent 60%
+      ),
+      radial-gradient(45% 45% at 88% 20%, hsl(var(--accent) / 0.22) 0%, transparent 55%),
+      radial-gradient(60% 60% at 60% 100%, hsl(var(--glow) / 0.18) 0%, transparent 60%);
+  }
+
+  /* زر متوهّج */
+  .btn-glow {
+    background: linear-gradient(
+      100deg,
+      hsl(var(--primary)),
+      hsl(var(--accent))
+    );
+    box-shadow: 0 10px 30px -8px hsl(var(--glow) / 0.6),
+      inset 0 1px 0 hsl(0 0% 100% / 0.25);
+  }
+
+  .shimmer::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      110deg,
+      transparent 30%,
+      hsl(0 0% 100% / 0.18) 50%,
+      transparent 70%
+    );
+    transform: translateX(100%);
+    animation: shimmer 2.6s ease-in-out infinite;
+  }
+
+  /* هيكل عظمي للتحميل (Skeleton) — نبض + وميض */
+  .skeleton {
+    position: relative;
+    overflow: hidden;
+    background: hsl(var(--muted));
+  }
+  .skeleton::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    transform: translateX(-100%);
+    background: linear-gradient(
+      90deg,
+      transparent,
+      hsl(var(--foreground) / 0.07),
+      transparent
+    );
+    animation: skeleton-sweep 1.4s ease-in-out infinite;
+  }
+
+  /* رسم مسار SVG عند الظهور */
+  .draw-check {
+    stroke-dasharray: 48;
+    stroke-dashoffset: 48;
+    transition: stroke-dashoffset 0.7s ease 0.1s;
+  }
+  .draw-check[data-drawn="true"] {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes skeleton-sweep {
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+/* احترام تفضيل تقليل الحركة */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ============================================================
+   سكِن لوحة الإدارة (تصميم فقط)
+   خلفية كريمية · سايدبار أخضر · بطاقات بيضاء بحواف ناعمة.
+   كل القواعد محصورة داخل .admin-skin فلا تؤثر على الموقع أو بوابة الطالب.
+   ============================================================ */
+.admin-skin {
+  --background: 34 60% 96%;
+  --foreground: 200 20% 18%;
+  --card: 0 0% 100%;
+  --card-foreground: 200 20% 18%;
+  --muted: 34 38% 94%;
+  --muted-foreground: 205 10% 46%;
+  --border: 34 24% 88%;
+  --primary: 158 46% 33%;
+  --primary-foreground: 0 0% 100%;
+  --accent: 38 56% 72%;
+  --glow: 158 42% 42%;
+
+  --admin-green: 158 46% 33%;
+  --admin-sand: 38 58% 74%;
+
+  color: hsl(var(--foreground));
+}
+
+/* لا هالات ملوّنة في اللوحة */
+.admin-skin .ambient-mesh { display: none !important; }
+
+/* بطاقات صلبة بدل الزجاج */
+.admin-skin .glass {
+  background: hsl(var(--card)) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  border: 1px solid hsl(var(--border)) !important;
+}
+.admin-skin .shadow-bento { box-shadow: 0 14px 34px -26px rgba(20, 45, 35, 0.55) !important; }
+.admin-skin .shadow-glow, .admin-skin .shadow-glow-lg { box-shadow: 0 14px 34px -26px rgba(20, 45, 35, 0.55) !important; }
+
+/* الأزرار الأساسية: أخضر مصمت */
+.admin-skin .btn-glow {
+  background: hsl(var(--admin-green)) !important;
+  box-shadow: 0 10px 22px -14px hsl(var(--admin-green) / 0.9) !important;
+}
+.admin-skin .shimmer::after { display: none; }
+
+/* الشريط الجانبي الأخضر */
+.admin-skin aside {
+  background: hsl(var(--admin-green)) !important;
+  border-color: transparent !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  border-radius: 28px 0 0 28px;
+  color: #fff;
+}
+.admin-skin aside a,
+.admin-skin aside p,
+.admin-skin aside span,
+.admin-skin aside button { color: #fff; }
+.admin-skin aside .text-muted-foreground { color: hsl(0 0% 100% / 0.75) !important; }
+.admin-skin aside a:hover { background: hsl(0 0% 100% / 0.12); }
+/* العنصر النشط: كبسولة بيضاء ونص أخضر */
+.admin-skin aside .bg-primary\/10 {
+  background: #fff !important;
+  box-shadow: none !important;
+}
+.admin-skin aside a.text-primary,
+.admin-skin aside a.text-primary span { color: hsl(var(--admin-green)) !important; }
+.admin-skin aside .btn-glow {
+  background: hsl(0 0% 100% / 0.16) !important;
+  box-shadow: none !important;
+}
+/* بطاقة المستخدم أسفل السايدبار */
+.admin-skin aside .bg-card\/50 {
+  background: hsl(0 0% 100% / 0.12) !important;
+  border-color: hsl(0 0% 100% / 0.22) !important;
+}
+
+/* لوح المحتوى الأبيض */
+.admin-skin header {
+  background: hsl(var(--card)) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  border-bottom: 1px solid hsl(var(--border));
+}
+.admin-skin main { background: hsl(var(--card)); }
+@media (min-width: 1024px) {
+  .admin-skin header { margin: 16px 16px 0 16px; border-radius: 24px 24px 0 0; }
+  .admin-skin main { margin: 0 16px 16px 16px; border-radius: 0 0 24px 24px; }
+}
+
+/* حقول وأزرار ثانوية أهدأ */
+.admin-skin input, .admin-skin select, .admin-skin textarea { background: hsl(var(--card)) !important; }
+.admin-skin .bg-card\/60 { background: hsl(var(--card)) !important; }
+
+/* ============================================================
+   الجوّال والتطبيق المثبّت (PWA)
+   ============================================================ */
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  /* لا وميض أزرق عند اللمس، وتمرير سلس على iOS */
+  -webkit-tap-highlight-color: transparent;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* أهداف لمس مريحة: أي زر/رابط أيقوني لا يقل عن 44px على الشاشات اللمسية */
+@media (hover: none) and (pointer: coarse) {
+  button, a, select, [role="button"] {
+    touch-action: manipulation;
+  }
+}
+
+/* منع تكبير حقول الإدخال تلقائياً على iOS (يحدث تحت 16px) */
+@media (max-width: 480px) {
+  input, select, textarea {
+    font-size: 16px;
+  }
+}
+
+/* في وضع التطبيق المثبّت: لا تحديد نص عرضي على عناصر الواجهة */
+@media (display-mode: standalone) {
+  body {
+    overscroll-behavior-y: contain;
+  }
+  .no-select-app {
+    -webkit-user-select: none;
+    user-select: none;
+  }
+}
+
+@layer utilities {
+  /* حوّاف آمنة (نوتش/شريط الإيماءات) */
+  .pb-safe { padding-bottom: env(safe-area-inset-bottom); }
+  .pt-safe { padding-top: env(safe-area-inset-top); }
+  .mb-safe { margin-bottom: env(safe-area-inset-bottom); }
+
+  /* شريط أدوات سفلي لاصق فوق شريط التنقّل في الجوّال */
+  .sticky-cta {
+    position: sticky;
+    bottom: calc(4.5rem + env(safe-area-inset-bottom));
+    z-index: 20;
+  }
+}
+
+/* ============================================================
+   حركة أيقونات الهوية (SVG)
+   كل الحركات داخل no-preference — تتوقّف تماماً مع تقليل الحركة.
+   ============================================================ */
+@keyframes ico-draw   { to { stroke-dashoffset: 0; } }
+@keyframes ico-swing  { 0%, 60%, 100% { transform: rotate(0); } 70% { transform: rotate(11deg); } 80% { transform: rotate(-9deg); } 90% { transform: rotate(5deg); } }
+@keyframes ico-pulse  { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: .72; transform: scale(1.08); } }
+@keyframes ico-flick  { 0%, 100% { transform: scale(1) rotate(0); } 35% { transform: scale(1.06) rotate(-3deg); } 70% { transform: scale(.97) rotate(3deg); } }
+@keyframes ico-bob    { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-2.5px); } }
+@keyframes ico-pop    { 0% { transform: scale(.72); } 60% { transform: scale(1.12); } 100% { transform: scale(1); } }
+@keyframes ico-slide  { 0% { transform: translateX(0); } 45% { transform: translateX(-4px); } 100% { transform: translateX(0); } }
+@keyframes ico-spin   { to { transform: rotate(360deg); } }
+@keyframes ico-tick   { 0% { transform: scale(1); } 50% { transform: scale(1.14); } 100% { transform: scale(1); } }
+
+@media (prefers-reduced-motion: no-preference) {
+  /* رسم الخطوط عند الظهور — للأيقونات الخطّية فقط */
+  .ico-draw > * {
+    stroke-dasharray: 140;
+    stroke-dashoffset: 140;
+    animation: ico-draw 0.9s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  }
+  .ico-draw > *:nth-child(2) { animation-delay: 0.1s; }
+  .ico-draw > *:nth-child(3) { animation-delay: 0.2s; }
+  .ico-draw > *:nth-child(4) { animation-delay: 0.3s; }
+
+  .ico-swing  { animation: ico-swing 3.2s ease-in-out infinite; transform-origin: 50% 18%; transform-box: fill-box; }
+  .ico-pulse  { animation: ico-pulse 2.1s ease-in-out infinite; transform-origin: center; transform-box: fill-box; }
+  .ico-flick  { animation: ico-flick 1.9s ease-in-out infinite; transform-origin: 50% 92%; transform-box: fill-box; }
+  .ico-bob    { animation: ico-bob 2.6s ease-in-out infinite; }
+  .ico-pop    { animation: ico-pop 0.45s cubic-bezier(0.34, 1.56, 0.64, 1); transform-origin: center; transform-box: fill-box; }
+  .ico-tick   { animation: ico-tick 0.4s ease-out; transform-origin: center; transform-box: fill-box; }
+
+  /* حركات عند تمرير المؤشّر على العنصر الأب (.group) */
+  .group:hover .ico-slide { animation: ico-slide 0.55s ease; }
+  .group:hover .ico-turn  { animation: ico-spin 1.1s cubic-bezier(0.4, 0, 0.2, 1); transform-origin: center; transform-box: fill-box; }
+  .group:hover .ico-jump  { animation: ico-pop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1); transform-origin: center; transform-box: fill-box; }
+}

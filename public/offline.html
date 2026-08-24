@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>بلا اتصال</title>
+    <style>
+      :root { color-scheme: light dark; }
+      body {
+        margin: 0; min-height: 100dvh; display: grid; place-items: center;
+        background: #0b1020; color: #e8ecf8; padding: 24px;
+        font-family: "Readex Pro", system-ui, -apple-system, "Segoe UI", sans-serif;
+        text-align: center;
+      }
+      .card { max-width: 22rem; }
+      h1 { font-size: 1.25rem; margin: 1.25rem 0 0.5rem; }
+      p { margin: 0; font-size: 0.9rem; line-height: 1.9; color: #a9b3cd; }
+      button {
+        margin-top: 1.5rem; border: 0; border-radius: 999px; padding: 0.75rem 1.75rem;
+        font: inherit; font-weight: 700; color: #fff; background: #12b981; cursor: pointer;
+      }
+      svg { color: #12b981; }
+    </style>
+  </head>
+  <body>
+    <div class="card">
+      <svg width="88" height="88" viewBox="0 0 96 96" fill="none" aria-hidden="true">
+        <circle cx="48" cy="48" r="34" stroke="currentColor" stroke-opacity=".25" stroke-width="1.5" />
+        <path d="M26 56c6-8 13.5-12 22-12s16 4 22 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+        <path d="M34 46c4-5 8.5-7.5 14-7.5S58 41 62 46" stroke="currentColor" stroke-opacity=".6" stroke-width="2" stroke-linecap="round" />
+        <circle cx="48" cy="64" r="3.5" fill="currentColor" />
+        <path d="M22 22 74 74" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" />
+      </svg>
+      <h1>لا يوجد اتصال بالإنترنت</h1>
+      <p>تحقّق من الشبكة ثم أعد المحاولة — دروسك في انتظارك.</p>
+      <button onclick="location.reload()">إعادة المحاولة</button>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="520" height="650" viewBox="0 0 520 650" fill="none">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#7c3aed"/>
+      <stop offset="1" stop-color="#c026d3"/>
+    </linearGradient>
+  </defs>
+  <rect width="520" height="650" fill="url(#g)" opacity="0.12"/>
+  <circle cx="260" cy="230" r="120" fill="url(#g)" opacity="0.9"/>
+  <path d="M80 650c0-115 80-190 180-190s180 75 180 190z" fill="url(#g)" opacity="0.9"/>
+  <text x="260" y="620" text-anchor="middle" font-family="sans-serif" font-size="26" fill="#ffffff" opacity="0.85">صورة المدرّس (استبدلها)</text>
+</svg>

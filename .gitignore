@@ -1,0 +1,25 @@
+/node_modules
+/.next
+/out
+/build
+.env*
+.DS_Store
+*.tsbuildinfo
+next-env.d.ts
+
+# بيانات وملفات تشغيلية — لا تُرفع أبداً
+/data
+/public/uploads
+*.log
+
+# أسرار ومفاتيح
+.env
+.env.*
+!.env.example
+*serviceAccount*.json
+*service-account*.json
+*client_secret*.json
+*.pem
+*.key
+firebase-debug.log
+.firebase/

@@ -1,0 +1,13 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": "nextjs",
+  "regions": ["fra1"],
+  "crons": [
+    { "path": "/api/cron/backup", "schedule": "0 2 * * *" }
+  ],
+  "functions": {
+    "app/api/upload/route.ts": { "maxDuration": 60 },
+    "app/api/backup/route.ts": { "maxDuration": 60 },
+    "app/api/media/[id]/route.ts": { "maxDuration": 60 }
+  }
+}
