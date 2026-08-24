@@ -75,16 +75,16 @@ export function InstallApp({ className = "" }: { className?: string }) {
     <motion.div
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
-      className={`glass relative overflow-hidden rounded-3xl p-5 shadow-bento ${className}`}
+      className={`glass relative overflow-hidden rounded-2xl p-3.5 shadow-bento sm:rounded-3xl sm:p-5 ${className}`}
     >
-      <CornerKnot size={72} className="pointer-events-none absolute left-0 top-0 -scale-x-100 text-primary/40" />
-      <div className="relative flex flex-wrap items-center gap-4">
-        <span className="grid size-12 shrink-0 place-items-center rounded-2xl bg-primary/12 text-primary">
-          <IconInstall anim="bob" className="size-6" />
+      <CornerKnot size={72} className="pointer-events-none absolute bottom-0 left-0 hidden text-primary/40 sm:block" />
+      <div className="relative flex flex-wrap items-center gap-3 pl-9 sm:gap-4 sm:pl-11">
+        <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-primary/12 text-primary sm:size-12 sm:rounded-2xl">
+          <IconInstall anim="bob" className="size-5 sm:size-6" />
         </span>
         <div className="min-w-0 flex-1">
-          <p className="font-display font-extrabold">ثبّت المنصّة كتطبيق</p>
-          <p className="mt-0.5 text-xs leading-relaxed text-muted-foreground">
+          <p className="font-display text-sm font-extrabold sm:text-base">ثبّت المنصّة كتطبيق</p>
+          <p className="mt-0.5 text-[11px] leading-snug text-muted-foreground sm:text-xs sm:leading-relaxed">
             افتح دروسك من أيقونة على شاشة جهازك مباشرة — بشاشة كاملة وبلا شريط متصفّح.
           </p>
         </div>
@@ -92,21 +92,21 @@ export function InstallApp({ className = "" }: { className?: string }) {
         {ios ? (
           <button
             onClick={() => setShowIosSteps((v) => !v)}
-            className="inline-flex items-center gap-2 rounded-full btn-glow px-5 py-2.5 text-sm font-bold text-white"
+            className="inline-flex w-full items-center justify-center gap-2 rounded-full btn-glow px-5 py-2.5 text-[13px] font-bold text-white sm:w-auto sm:text-sm"
           >
             <IconShare className="size-4" /> طريقة التثبيت
           </button>
         ) : (
           <button
             onClick={install}
-            className="inline-flex items-center gap-2 rounded-full btn-glow px-5 py-2.5 text-sm font-bold text-white"
+            className="inline-flex w-full items-center justify-center gap-2 rounded-full btn-glow px-5 py-2.5 text-[13px] font-bold text-white sm:w-auto sm:text-sm"
           >
             <IconInstall className="size-4" /> تثبيت التطبيق
           </button>
         )}
 
-        <button onClick={dismiss} aria-label="إخفاء" className="grid size-8 shrink-0 place-items-center rounded-full border border-border text-muted-foreground transition hover:text-foreground">
-          <IconClose className="size-4" />
+        <button onClick={dismiss} aria-label="إخفاء" className="absolute left-0 top-0 z-10 grid size-7 place-items-center rounded-full border border-border bg-background/70 text-muted-foreground transition hover:text-foreground sm:size-8">
+          <IconClose className="size-3.5 sm:size-4" />
         </button>
       </div>
 
@@ -117,7 +117,7 @@ export function InstallApp({ className = "" }: { className?: string }) {
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
             transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
-            className="relative mt-4 space-y-2 overflow-hidden border-t border-border pt-4 text-sm text-muted-foreground"
+            className="relative mt-3 space-y-2 overflow-hidden border-t border-border pt-3 text-xs text-muted-foreground sm:mt-4 sm:pt-4 sm:text-sm"
           >
             <li className="flex items-center gap-2">
               <IconShare className="size-4 shrink-0 text-primary" /> اضغط زر «مشاركة» في شريط سفاري.

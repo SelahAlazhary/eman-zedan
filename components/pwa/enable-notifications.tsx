@@ -82,15 +82,15 @@ export function EnableNotifications({ className = "" }: { className?: string }) 
   if (state === "unsupported" || state === "on") return null;
 
   return (
-    <div className={`glass relative overflow-hidden rounded-3xl p-5 shadow-bento ${className}`}>
-      <CornerKnot size={68} className="pointer-events-none absolute left-0 top-0 -scale-x-100 text-primary/40" />
-      <div className="relative flex flex-wrap items-center gap-4">
-        <span className="grid size-12 shrink-0 place-items-center rounded-2xl bg-primary/12 text-primary">
-          <IconBell anim="swing" className="size-6" />
+    <div className={`glass relative overflow-hidden rounded-2xl p-3.5 shadow-bento sm:rounded-3xl sm:p-5 ${className}`}>
+      <CornerKnot size={68} className="pointer-events-none absolute bottom-0 left-0 hidden text-primary/40 sm:block" />
+      <div className="relative flex flex-wrap items-center gap-3 sm:gap-4">
+        <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-primary/12 text-primary sm:size-12 sm:rounded-2xl">
+          <IconBell anim="swing" className="size-5 sm:size-6" />
         </span>
         <div className="min-w-0 flex-1">
-          <p className="font-display font-extrabold">إشعارات على شاشة جهازك</p>
-          <p className="mt-0.5 text-xs leading-relaxed text-muted-foreground">
+          <p className="font-display text-sm font-extrabold sm:text-base">إشعارات على شاشة جهازك</p>
+          <p className="mt-0.5 text-[11px] leading-snug text-muted-foreground sm:text-xs sm:leading-relaxed">
             {state === "blocked"
               ? "الإشعارات محظورة لهذا الموقع — فعّلها من إعدادات المتصفّح ثم أعد المحاولة."
               : state === "ios-needs-install"
@@ -101,14 +101,14 @@ export function EnableNotifications({ className = "" }: { className?: string }) 
         </div>
 
         {state === "ios-needs-install" ? (
-          <span className="inline-flex items-center gap-1.5 rounded-full border border-border px-4 py-2 text-xs font-bold text-muted-foreground">
+          <span className="inline-flex w-full items-center justify-center gap-1.5 rounded-full border border-border px-4 py-2 text-xs font-bold text-muted-foreground sm:w-auto">
             <IconInstall className="size-4" /> ثبّت التطبيق أولاً
           </span>
         ) : (
           <button
             onClick={enable}
             disabled={state === "busy" || state === "blocked"}
-            className="inline-flex items-center gap-2 rounded-full btn-glow px-5 py-2.5 text-sm font-bold text-white disabled:opacity-60"
+            className="inline-flex w-full items-center justify-center gap-2 rounded-full btn-glow px-5 py-2.5 text-[13px] font-bold text-white disabled:opacity-60 sm:w-auto sm:text-sm"
           >
             {state === "busy" ? <IconSpinner className="size-4 animate-spin" /> : <IconCheckCircle className="size-4" />}
             تفعيل الإشعارات
