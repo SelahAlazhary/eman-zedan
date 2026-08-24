@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { driveAccessToken } from "@/lib/google";
 import { getDB, loadDB } from "@/lib/db";
 import { recordEvent } from "@/lib/security";
+import { getSession } from "@/lib/session";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
@@ -23,7 +24,8 @@ export async function GET(req: Request, ctx: { params: Promise<{ id: string }> }
 
   // لا يُخدَم إلا ملف مذكور فعلاً داخل بيانات المنصّة —
   // فلا يتحوّل الخادم إلى وسيط مفتوح لبقية ملفات حساب Drive.
-  if (!referencedInPlatform(id)) {
+  const session = await getSession();
+  if (session?.role !== "admin" && !referencedInPlatform(id)) {
     await recordEvent("media_denied", `طلب ملف غير مسجّل: ${id.slice(0, 12)}…`);
     return NextResponse.json({ error: "غير موجود" }, { status: 404 });
   }
@@ -61,18 +63,20 @@ export async function GET(req: Request, ctx: { params: Promise<{ id: string }> }
   return new NextResponse(upstream.body, { status: upstream.status, headers });
 }
 
-/** هل معرّف الملف مذكور في أي مكان داخل بيانات المنصّة؟ */
+/**
+ * هل يجوز خدمة هذا الملف؟
+ *
+ * • الأدمن: نعم دائماً — وإلا لم تظهر معاينة الصورة فور رفعها،
+ *   قبل حفظها في البيانات (كان هذا سبب «الصورة لا تظهر بعد الرفع»).
+ * • غير ذلك: فقط إن كان الملف مذكوراً فعلاً داخل بيانات المنصّة،
+ *   حتى لا يتحوّل الخادم إلى وسيط مفتوح لبقية ملفات حساب Drive.
+ */
 function referencedInPlatform(id: string): boolean {
   try {
     const db = getDB();
-    const haystack = JSON.stringify({
-      content: db.content,
-      subjects: db.subjects,
-      exams: db.exams,
-      live: db.live,
-      youtube: db.youtube,
-    });
-    return haystack.includes(id);
+    // كل البيانات عدا الحسابات والأسرار — ليشمل الخطط والصفوف وأغلفتها
+    const { users, integrations, security, codes, ...rest } = db;
+    return JSON.stringify(rest).includes(id);
   } catch {
     return false;
   }
