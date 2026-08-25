@@ -123,10 +123,42 @@ export async function PATCH(req: Request) {
     active?: boolean;
     resetDevice?: boolean;
     password?: string;
+    transferOwner?: boolean;
   };
   const db = getDB();
   const target = db.users.find((u) => u.id === body.id && u.role === "admin");
   if (!target) return NextResponse.json({ error: "المشرف غير موجود" }, { status: 404 });
+
+  /**
+   * نقل ملكية المنصّة إلى مشرف آخر.
+   *
+   * خطوة لا رجعة فيها من طرف واحد: بعدها يملك الطرف الآخر كل شيء
+   * — بما فيه سحب صلاحياتك — ولن تستطيعي استردادها إلا بموافقته.
+   * لذا: المالكة وحدها تنفّذها، والهدف يجب أن يكون مشرفاً مفعّلاً.
+   */
+  if (body.transferOwner) {
+    if (target.owner) {
+      return NextResponse.json({ error: "هذا الحساب هو المالك بالفعل" }, { status: 400 });
+    }
+    if (!target.active) {
+      return NextResponse.json({ error: "فعّلي حساب المشرف أولاً قبل نقل الملكية" }, { status: 400 });
+    }
+
+    target.owner = true;
+    target.adminPerms = [...ALL_PERMS];
+
+    // المالكة السابقة تبقى مشرفة بكل الصلاحيات عدا إدارة المشرفين
+    gate.me.owner = false;
+    gate.me.adminPerms = ALL_PERMS.filter((p) => p !== "team");
+
+    saveDB(db);
+    await flushDB();
+    await recordEvent("admin_changed", `نقل الملكية إلى ${target.username}`, {
+      userId: target.id,
+      username: target.username,
+    });
+    return NextResponse.json({ ok: true, transferred: true, admin: view(target) });
+  }
 
   // المالكة: يجوز تحرير جهازها وكلمة مرورها فقط — لا صلاحياتها ولا إيقافها
   if (target.owner && (body.perms !== undefined || body.active !== undefined)) {

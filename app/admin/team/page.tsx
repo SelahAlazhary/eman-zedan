@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { PERMS, DEFAULT_PERMS, type AdminPerm } from "@/lib/perms";
 import {
-  IconShield, IconPlus, IconClose, IconCheckCircle, IconSpinner, IconXCircle, IconPhone,
+  IconShield, IconPlus, IconClose, IconCheckCircle, IconSpinner, IconXCircle, IconPhone, IconTrophy,
 } from "@/components/brand/icons";
 
 /**
@@ -91,6 +91,21 @@ export default function TeamPage() {
     if (!res.ok) { say("err", data.error ?? "تعذّر الحذف"); return; }
     say("ok", "حُذف المشرف");
     void load();
+  };
+
+  /**
+   * نقل الملكية — خطوة لا رجعة فيها، لذا تأكيد بكتابة اسم المشرف.
+   */
+  const transfer = async (a: Admin) => {
+    const typed = prompt(
+      `نقل ملكية المنصّة إلى «${a.name}»؟\n\n` +
+        `بعدها يملك كل شيء — بما فيه سحب صلاحياتك — ولن تستردّيها إلا بموافقته.\n` +
+        `أنتِ ستبقين مشرفة بكل الصلاحيات عدا إدارة المشرفين.\n\n` +
+        `للتأكيد اكتبي اسمه بالضبط:`
+    );
+    if (typed === null) return;
+    if (typed.trim() !== a.name.trim()) { say("err", "الاسم غير مطابق — أُلغي النقل"); return; }
+    await patch(a.id, { transferOwner: true }, `أصبح ${a.name} مالك المنصّة`);
   };
 
   const togglePerm = (a: Admin, perm: AdminPerm) => {
@@ -228,6 +243,14 @@ export default function TeamPage() {
                         className="inline-flex flex-1 items-center justify-center rounded-full border border-border px-3.5 py-2 text-xs font-bold transition hover:border-primary/40 disabled:opacity-60 sm:flex-none"
                       >
                         {a.active ? "إيقاف" : "تفعيل"}
+                      </button>
+                      <button
+                        onClick={() => transfer(a)}
+                        disabled={busy === a.id}
+                        title="نقل ملكية المنصّة إلى هذا الحساب"
+                        className="inline-flex flex-1 items-center justify-center gap-1.5 rounded-full border border-amber-500/40 px-3.5 py-2 text-xs font-bold text-amber-600 transition hover:bg-amber-500/8 disabled:opacity-60 sm:flex-none"
+                      >
+                        <IconTrophy className="size-3.5" /> نقل الملكية
                       </button>
                       <button
                         onClick={() => remove(a)}
