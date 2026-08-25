@@ -103,7 +103,7 @@ export function DashboardShell({
   );
 
   return (
-    <div className="app-shell bg-background lg:min-h-screen">
+    <div className="app-shell bg-background">
       {/* هالة خلفية خفيفة */}
       <div className="ambient-mesh pointer-events-none fixed inset-0 -z-10 opacity-30" />
 
@@ -144,7 +144,7 @@ export function DashboardShell({
       </AnimatePresence>
 
       {/* المحتوى */}
-      <div className="app-body lg:block lg:pr-64">
+      <div className="app-body lg:pr-64">
         {/* Topbar */}
         <header className="sticky top-0 z-30 flex items-center gap-3 border-b border-border bg-background/80 px-4 pb-3 pt-[max(0.75rem,env(safe-area-inset-top))] backdrop-blur-xl sm:px-6">
           <button onClick={() => setOpen(true)} aria-label="القائمة" className={`grid size-11 shrink-0 place-items-center rounded-full border border-border lg:hidden ${role === "student" ? "hidden" : ""}`}>
