@@ -17,6 +17,7 @@ export const adminNav: NavItem[] = [
   { href: "/admin/analytics", label: "التحليلات", icon: "BarChart3" },
   { href: "/admin/security", label: "الأمان", icon: "Shield" },
   { href: "/admin/backup", label: "النسخ الاحتياطي", icon: "Database" },
+  { href: "/admin/testimonials", label: "شهادات الطلاب", icon: "Star" },
   { href: "/admin/support", label: "الدعم", icon: "LifeBuoy" },
   { href: "/admin/team", label: "المشرفون", icon: "Shield" },
 ];

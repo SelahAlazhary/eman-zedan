@@ -17,7 +17,7 @@ import type { IconProps } from "@/components/brand/icons";
 import {
   IconGrid, IconUsers, IconLayers, IconBook, IconKey, IconClipboardCheck, IconRadio,
   IconChart, IconLifebuoy, IconHome, IconPalette, IconSearch, IconBell, IconMenu, IconClose,
-  IconMoon, IconSun, IconLogout, IconWallet, IconYoutube, IconDatabase, IconShield,
+  IconMoon, IconSun, IconLogout, IconWallet, IconYoutube, IconDatabase, IconShield, IconStar,
 } from "@/components/brand/icons";
 import { BrandLockup } from "@/components/brand/logo";
 import { useContent } from "@/components/content/content-provider";
@@ -43,6 +43,7 @@ const ICONS: Record<string, BrandIcon> = {
   Youtube: IconYoutube,
   Database: IconDatabase,
   Shield: IconShield,
+  Star: IconStar,
 };
 
 export function DashboardShell({

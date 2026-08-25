@@ -102,6 +102,19 @@ export type HonorStudent = { name: string; grade: string; score: string; quote: 
 export type Faq = { q: string; a: string };
 
 /** المحتوى القابل للتعديل من لوحة الأدمن (هوية + نصوص + ألوان). */
+/** شهادة طالب تُعرض في الصفحة الرئيسية (رأي أو تميّز). */
+export type Testimonial = {
+  id: string;
+  name: string;           // اسم الطالب
+  text: string;           // نصّ الشهادة
+  badge?: string;         // وسام: «الأول على الدفعة»، «٩٨٪» …
+  grade?: string;         // الصف أو المدرسة
+  photo?: string;         // صورة الطالب (رابط أو درايف)
+  rating?: number;        // ١..٥ — اختياري
+  featured?: boolean;     // يُبرز في المقدّمة (الطالب الأول)
+  hidden?: boolean;       // مخفيّة مؤقّتاً
+};
+
 export type SiteContent = {
   brand: string;
   platformSubtitle: string;
@@ -156,6 +169,7 @@ export type SiteContent = {
   curriculum: CurriculumUnit[];
   honorStudents: HonorStudent[];
   faqs: Faq[];
+  testimonials?: Testimonial[]; // شهادات الطلاب في الصفحة الرئيسية
 };
 
 /* ---------- كيانات لوحة الأدمن ---------- */

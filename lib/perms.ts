@@ -21,6 +21,7 @@ export type AdminPerm =
   | "analytics"
   | "security"
   | "backup"
+  | "testimonials"
   | "support"
   | "team";
 
@@ -38,6 +39,7 @@ export const PERMS: { key: AdminPerm; label: string; hint: string }[] = [
   { key: "analytics", label: "التحليلات", hint: "أرقام المنصّة وتقاريرها" },
   { key: "security", label: "الأمان", hint: "سجلّ المحاولات المشبوهة والحظر" },
   { key: "backup", label: "النسخ الاحتياطي", hint: "النسخ والاستعادة" },
+  { key: "testimonials", label: "شهادات الطلاب", hint: "آراء الطلاب والمتفوّقين في الصفحة الرئيسية" },
   { key: "support", label: "الدعم", hint: "روابط التواصل مع الطلاب" },
   { key: "team", label: "المشرفون", hint: "إضافة مشرفين وتحديد صلاحياتهم — للمالكة فقط" },
 ];
@@ -85,6 +87,7 @@ export function permForPath(href: string): AdminPerm | null {
     "/admin/analytics": "analytics",
     "/admin/security": "security",
     "/admin/backup": "backup",
+    "/admin/testimonials": "testimonials",
     "/admin/support": "support",
     "/admin/team": "team",
   };
