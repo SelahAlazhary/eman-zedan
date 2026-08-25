@@ -4,6 +4,7 @@ import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { IconWhatsapp, IconPlus, IconPhone, IconMail, IconLifebuoy } from "@/components/brand/icons";
 import { InstallApp } from "@/components/pwa/install-app";
+import { SupportChat } from "@/components/support/chat";
 import { supportHref } from "@/lib/support";
 import { PageHeader, Card } from "@/components/dashboard/ui";
 import { useContent } from "@/components/content/content-provider";
@@ -17,6 +18,15 @@ export default function HelpPage() {
       <PageHeader title="المساعدة" subtitle="إجابات سريعة أو تواصل مباشر مع الدعم" />
 
       <InstallApp className="mb-6" />
+
+      {/* محادثة مباشرة مع فريق الدعم داخل المنصّة */}
+      <section className="mb-8">
+        <div className="mb-3 flex items-center gap-2">
+          <IconLifebuoy className="size-5 text-primary" />
+          <h2 className="font-display font-extrabold">تحدّث مع فريق الدعم</h2>
+        </div>
+        <SupportChat emptyHint="اكتب سؤالك وسيصلك الردّ هنا — وإشعار على جهازك." />
+      </section>
 
       <div className="mb-8 grid gap-4 sm:grid-cols-3">
         <a href={`https://wa.me/${content.support?.whatsapp || content.whatsapp}?text=${encodeURIComponent("السلام عليكم، أحتاج مساعدة")}`} target="_blank" rel="noreferrer" className="group">

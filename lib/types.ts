@@ -324,13 +324,28 @@ export type Notification = {
   userId?: string;  // موجّه لطالب واحد بعينه (اختياري)
   link?: string;    // رابط اختياري داخل المنصة
 };
+/** رسالة داخل محادثة الدعم. */
+export type ChatMessage = {
+  id: string;
+  from: "student" | "support";
+  text: string;
+  at: string;
+  authorName?: string;      // اسم من ردّ من فريق الدعم
+  readByStudent?: boolean;
+  readByAdmin?: boolean;
+};
+
+/** محادثة دعم واحدة لكل طالب. */
 export type Ticket = {
   id: string;
-  student: string;
+  userId?: string;          // صاحب المحادثة
+  student: string;          // اسم الطالب
   subject: string;
   priority: "عالية" | "متوسطة" | "منخفضة";
   status: "مفتوحة" | "قيد المعالجة" | "مغلقة";
-  time: string;
+  time: string;             // وقت الفتح (نص للعرض)
+  messages?: ChatMessage[];
+  lastAt?: string;          // آخر نشاط — للترتيب
 };
 
 /* ---------- المستخدمون (الحسابات) ---------- */

@@ -19,6 +19,7 @@ export const adminNav: NavItem[] = [
   { href: "/admin/backup", label: "النسخ الاحتياطي", icon: "Database" },
   { href: "/admin/testimonials", label: "شهادات الطلاب", icon: "Star" },
   { href: "/admin/support", label: "الدعم", icon: "LifeBuoy" },
+  { href: "/admin/support/chat", label: "محادثات الدعم", icon: "Bell" },
   { href: "/admin/team", label: "المشرفون", icon: "Shield" },
 ];
 
