@@ -5,12 +5,12 @@
  * الحفظ يمرّ على /api/testimonials الذي يفحص الصلاحية على الخادم.
  */
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { mediaSrc } from "@/lib/media";
 import type { Testimonial } from "@/lib/types";
 import {
-  IconStar, IconTrophy, IconPlus, IconXCircle, IconSpinner, IconCheckCircle, IconArrowLeft,
+  IconStar, IconTrophy, IconPlus, IconXCircle, IconSpinner, IconCheckCircle, IconArrowLeft, IconInstall,
 } from "@/components/brand/icons";
 
 const blank = (): Testimonial => ({
@@ -148,7 +148,7 @@ export default function TestimonialsPage() {
                 <Field label="اسم الطالب" value={t.name} onChange={(v) => set(t.id, { name: v })} placeholder="اسم الطالب" />
                 <Field label="الصف أو المدرسة" value={t.grade ?? ""} onChange={(v) => set(t.id, { grade: v })} placeholder="الثالث الثانوي — أزهري" />
                 <Field label="الوسام" value={t.badge ?? ""} onChange={(v) => set(t.id, { badge: v })} placeholder="الأول على الدفعة · ٩٨٪" />
-                <Field label="صورة الطالب (رابط أو درايف)" value={t.photo ?? ""} onChange={(v) => set(t.id, { photo: v })} placeholder="اختياري — يظهر أول حرف بدلاً منها" />
+                <PhotoField value={t.photo ?? ""} onChange={(v) => set(t.id, { photo: v })} />
               </div>
 
               <label className="block">
@@ -192,6 +192,81 @@ export default function TestimonialsPage() {
             </section>
           ))}
         </div>
+      )}
+    </div>
+  );
+}
+
+/**
+ * صورة الطالب — ترفع إلى Google Drive مباشرة.
+ * الملف لا يُخزَّن على الخادم إطلاقاً، والصورة تُعرض عبر وسيط المنصّة.
+ */
+function PhotoField({ value, onChange }: { value: string; onChange: (v: string) => void }) {
+  const [busy, setBusy] = useState(false);
+  const [err, setErr] = useState<string | null>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const src = mediaSrc(value);
+
+  const pick = async (file?: File | null) => {
+    if (!file) return;
+    if (!file.type.startsWith("image/")) { setErr("اختاري ملف صورة"); return; }
+    setErr(null);
+    setBusy(true);
+    const fd = new FormData();
+    fd.append("file", file);
+    fd.append("target", "drive"); // درايف دائماً — لا تخزين محلي
+    const res = await fetch("/api/upload", { method: "POST", body: fd });
+    const data = await res.json().catch(() => ({}));
+    setBusy(false);
+    if (!res.ok) { setErr(data.error ?? "تعذّر الرفع"); return; }
+    onChange(data.url as string);
+  };
+
+  return (
+    <div>
+      <span className="mb-1 block text-xs font-bold text-muted-foreground">صورة الطالب</span>
+      <div className="flex items-center gap-3">
+        {src ? (
+          <span className="relative size-14 shrink-0 overflow-hidden rounded-2xl ring-1 ring-border">
+            <Image src={src} alt="" width={56} height={56} className="size-full object-cover" unoptimized />
+          </span>
+        ) : (
+          <span className="grid size-14 shrink-0 place-items-center rounded-2xl border border-dashed border-border text-muted-foreground">
+            <IconInstall className="size-5" />
+          </span>
+        )}
+
+        <div className="flex min-w-0 flex-1 flex-wrap gap-2">
+          <input
+            ref={inputRef}
+            type="file"
+            accept="image/*"
+            className="hidden"
+            onChange={(e) => void pick(e.target.files?.[0])}
+          />
+          <button
+            type="button"
+            onClick={() => inputRef.current?.click()}
+            disabled={busy}
+            className="inline-flex items-center gap-1.5 rounded-full border border-border px-3.5 py-2 text-xs font-bold transition hover:border-primary/40 disabled:opacity-60"
+          >
+            {busy ? <IconSpinner className="size-3.5 animate-spin" /> : <IconInstall className="size-3.5" />}
+            {busy ? "جارٍ الرفع…" : src ? "تغيير الصورة" : "رفع صورة إلى درايف"}
+          </button>
+          {src && (
+            <button
+              type="button"
+              onClick={() => onChange("")}
+              className="inline-flex items-center gap-1.5 rounded-full border border-rose-500/30 px-3.5 py-2 text-xs font-bold text-rose-600 transition hover:bg-rose-500/8"
+            >
+              <IconXCircle className="size-3.5" /> إزالة
+            </button>
+          )}
+        </div>
+      </div>
+      {err && <p className="mt-1 text-[11px] font-bold text-rose-500">{err}</p>}
+      {!src && !err && (
+        <p className="mt-1 text-[11px] text-muted-foreground">اختياري — بلا صورة يظهر أوّل حرف من الاسم.</p>
       )}
     </div>
   );
