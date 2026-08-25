@@ -108,7 +108,7 @@ export function DashboardShell({
       <div className="ambient-mesh pointer-events-none fixed inset-0 -z-10 opacity-30" />
 
       {/* Sidebar سطح المكتب */}
-      <aside className="fixed inset-y-0 right-0 z-40 hidden w-64 flex-col gap-6 border-l border-border bg-card/40 p-5 backdrop-blur-xl lg:flex">
+      <aside className="fixed inset-y-0 right-0 z-40 hidden w-64 flex-col gap-6 overflow-y-auto overscroll-contain border-l border-border bg-card/40 p-5 backdrop-blur-xl lg:flex">
         <Brand role={role} />
         <NavLinks />
         <div className="mt-auto">
@@ -128,7 +128,7 @@ export function DashboardShell({
             <motion.aside
               initial={{ x: "100%" }} animate={{ x: 0 }} exit={{ x: "100%" }}
               transition={{ type: "spring", stiffness: 320, damping: 34 }}
-              className="fixed inset-y-0 right-0 z-50 flex w-[17.5rem] max-w-[85vw] flex-col gap-6 border-l border-border bg-background p-5 pb-[max(1.25rem,env(safe-area-inset-bottom))] pt-[max(1.25rem,env(safe-area-inset-top))] lg:hidden"
+              className="fixed inset-y-0 right-0 z-50 flex w-[17.5rem] max-w-[85vw] flex-col gap-6 overflow-y-auto overscroll-contain border-l border-border bg-background p-5 pb-[max(1.25rem,env(safe-area-inset-bottom))] pt-[max(1.25rem,env(safe-area-inset-top))] lg:hidden"
             >
               <div className="flex items-center justify-between">
                 <Brand role={role} />

@@ -206,30 +206,35 @@ body {
    هو ما يُمرَّر داخله. بهذا يصير الشريط السفلي جزءاً من الهيكل
    لا عنصراً «ثابتاً» — فلا يهتزّ ولا ينزلق مع شريط المتصفّح.
    ------------------------------------------------------------ */
+/* الهيكل يسري على كل المقاسات: الصفحة لا تُمرَّر، المحتوى وحده يُمرَّر.
+   القائمة الجانبية والترويسة والشريط السفلي كلّها ثابتة لا تتحرّك. */
+.app-shell {
+  height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.app-body {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.app-scroll {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+}
+
+/* الشريط اللاصق داخل الصفحات يلتصق بأسفل منطقة التمرير */
+.sticky-cta { bottom: 0; }
+
 @media (max-width: 1023.98px) {
-  .app-shell {
-    height: 100dvh;
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-  }
-
-  .app-body {
-    flex: 1 1 auto;
-    min-height: 0;
-    display: flex;
-    flex-direction: column;
-  }
-
-  .app-scroll {
-    flex: 1 1 auto;
-    min-height: 0;
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
-    overscroll-behavior: contain;
-  }
-
-  /* الشريط داخل الهيكل: لا position: fixed ولا إزاحة */
+  /* الشريط السفلي داخل الهيكل: لا position: fixed ولا إزاحة */
   .app-dock {
     position: static;
     bottom: auto;
@@ -238,9 +243,6 @@ body {
     padding-bottom: calc(env(safe-area-inset-bottom) + 0.5rem);
     padding-top: 0.375rem;
   }
-
-  /* الشريط اللاصق داخل الصفحات يلتصق بأسفل منطقة التمرير */
-  .sticky-cta { bottom: 0; }
 }
 
 @layer utilities {
