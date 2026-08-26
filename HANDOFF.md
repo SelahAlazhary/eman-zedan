@@ -11,7 +11,13 @@
 - **بوابة طالب** (كورسات، مشغّل فيديو، اختبارات، بث، إشعارات، مساعدة).
 
 **المسار:** `C:\Users\pc\Downloads\jawa-elmanhag-landing`
-**التقنيات:** Next.js **16.3.2** (App Router, Turbopack) · React **19** · TypeScript · Tailwind v3 · Framer Motion · Lucide.
+**التقنيات:** Next.js **16.3.2** (App Router, Turbopack) · React **19** · TypeScript · Tailwind v3 · Framer Motion · Lucide + رسوم SVG يدوية.
+
+**النشر (Production):**
+- الموقع المنشور: **https://eman-zedan.vercel.app/**
+- مستودع GitHub: `github.com/SelahAlazhary/eman-zedan`
+- مشروع Vercel باسم `eman-zedan` (`.vercel/project.json`) — نشر تلقائي عند الدفع لـ GitHub.
+- الأسرار كلها في **Vercel Environment Variables** (وفي `.env.local` محلياً) — راجع `DEPLOY.md`.
 
 ---
 
@@ -25,9 +31,9 @@ cd "C:/Users/pc/Downloads/jawa-elmanhag-landing" && npm install && npm run dev
 
 ---
 
-## 3) طبقة البيانات (محلية الآن — قابلة للنقل لـ Supabase لاحقاً)
-- التخزين: **ملف JSON واحد** `data/db.json` يُنشأ تلقائياً من القيم الافتراضية عند أول تشغيل (احذفه لإعادة التهيئة).
-- كل الوصول عبر `lib/db.ts` (getDB/saveDB/patchDB + مساعدات المستخدمين/الأكواد). **المعمارية معزولة** خلف هذه الدوال ليسهل استبدالها بـ Supabase.
+## 3) طبقة البيانات (القاعدة الفعلية = Firebase Realtime DB · والملف المحلي احتياطي للتطوير)
+- **القاعدة الحقيقية في الإنتاج: Firebase Realtime Database** (تفاصيلها في §5-ط و§5-ي). إذا لم تُضبط متغيّرات Firebase في `.env.local` يسقط النظام تلقائياً إلى **ملف JSON محلي** `data/db.json` (يُنشأ فارغاً عند أول تشغيل — احذفه لإعادة التهيئة). ← هذا ما يجعل أي نسخة جديدة تشتغل محلياً فوراً بلا إعداد.
+- كل الوصول معزول خلف `lib/db.ts` + `lib/store.ts` (`loadDB/getDB/saveDB/getScopedDB/redeemCode/gradeQuiz` + مساعدات المستخدمين/الأكواد). `lib/firebase.ts` يتكفّل بالمزامنة السحابية.
 - **المنصة تبدأ فارغة تماماً** (لا بيانات وهمية): لا صفوف/مواد/طلاب/أكواد/اختبارات/بث. الموجود فقط: حساب الأدمن + نصوص الواجهة القابلة للتعديل.
 - الملفات المرفوعة تُخزَّن في `public/uploads/` وتُخدَم عبر **`/api/file/[name]`** (مهم: خادم الإنتاج لا يخدم ملفات public المُضافة وقت التشغيل، لذلك نخدمها عبر API — مع دعم Range للفيديو).
 
@@ -189,9 +195,13 @@ cd "C:/Users/pc/Downloads/jawa-elmanhag-landing" && npm install && npm run dev
 ---
 
 ## 8) الحالة الحالية / أفكار للمتابعة
-- ✅ كل ما سبق مبنيّ ومُختبَر (بناء ناجح + ٤٤ اختبار تكامل آلي على المسارات: تقييد الحمولة، الخطط، تفعيل الأكواد، انتهاء الاشتراك، الاختبار التفاعلي، الإشعارات).
-- ⏳ **مطلوب لاحقاً (طلب المالكة):** الربط بـ **Supabase** — المعمارية جاهزة خلف `lib/db.ts` (`getDB/saveDB/getScopedDB/redeemCode/gradeQuiz`).
+- ✅ كل ما سبق مبنيّ ومُختبَر (بناء ناجح + ٤٤ اختبار تكامل + ٢٨ اختبار حماية آلية) ومنشور على Vercel.
+- ✅ **التخزين السحابي مُنفَّذ بالفعل عبر Firebase** (لم تعد Supabase مطلوبة — الفكرة نُفِّذت على Firebase).
 - أفكار مفتوحة: تصدير بيانات الطلاب (Excel/CSV)، معاينة حيّة داخل صفحة التخصيص، بنك أسئلة عام للاختبارات.
+
+## 8-ب) نسخة ثانية لمدرّسة أخرى
+- توجد نسخة مطابقة للكود في `C:\Users\pc\Downloads\eman-zedan-teacher2` (بدون git/vercel/بيانات/أسرار) — تعمل محلياً فوراً بتخزين ملف محلي.
+- لجعلها منصّة مستقلّة منشورة: أنشئ لها `.env.local` من `.env.example` بقيمها الخاصة + مشروع Firebase + مشروع Vercel + ربط Google خاص بها، وحدّث `.firebaserc`. **لا تُشارك أسرار المنصّة الأولى** (تفادياً لاختلاط البيانات). اسم المدرّسة وكل الهوية تُضبط من `/admin/customize` (بيانات لا كود).
 
 ## 9) ملاحظات تشغيل مهمة
 - بعد أي تعديل: `npm run build` ثم `npm start -- -p <port>` (الإنتاج) — على ويندوز أوقف Node عبر PowerShell: `Get-Process node | Stop-Process -Force`.
